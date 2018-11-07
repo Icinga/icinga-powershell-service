@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            this.ServiceName = "Windows Deep Trace Service";
+            this.ServiceName = "Icinga Windows Service";
         }
 
         #endregion

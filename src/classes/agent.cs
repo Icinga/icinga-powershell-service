@@ -79,14 +79,14 @@ namespace icinga_service.src.classes
             );
 
             this.WriteEventLog(
-                "Starting Windows Deep Trace Service Daemon.",
+                "Starting Icinga Windows Service Daemon.",
                 EventLogEntryType.Information,
                 101
             );
             this.m_daemon.Start();
 
             this.WriteEventLog(
-                "Starting Windows Deep Trace Service Checker.",
+                "Starting Icinga Windows Service Checker.",
                 EventLogEntryType.Information,
                 101
             );
@@ -105,7 +105,7 @@ namespace icinga_service.src.classes
             } catch (Exception exception) {
                 this.WriteEventLog(
                     string.Format(
-                        "Failed to terminate Windows Deep Trace Service Daemon: {0}",
+                        "Failed to terminate Icinga Windows Service Daemon: {0}",
                         exception.Message
                     ),
                     EventLogEntryType.Error,
@@ -120,7 +120,7 @@ namespace icinga_service.src.classes
             } catch (Exception exception) {
                 this.WriteEventLog(
                     string.Format(
-                        "Failed to terminate Windows Deep Trace Service Checker: {0}",
+                        "Failed to terminate Icinga Windows Service Checker: {0}",
                         exception.Message
                     ),
                     EventLogEntryType.Error,

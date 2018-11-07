@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // Allgemeine Informationen über eine Assembly werden über die folgenden
 // Attribute gesteuert. Ändern Sie diese Attributwerte, um die Informationen zu ändern,
 // die einer Assembly zugeordnet sind.
-[assembly: AssemblyTitle("Windows Deep Trace Service")]
-[assembly: AssemblyDescription("The Service binary for the Windows Deep Trace PowerShell environment.")]
+[assembly: AssemblyTitle("Icinga Windows Service")]
+[assembly: AssemblyDescription("The Service binary for the Icinga Windows PowerShell modul.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Windows Deep Trace Service")]
+[assembly: AssemblyProduct("Icinga Windows Service")]
 [assembly: AssemblyCopyright("Copyright © Lord Hepipud 2018")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
