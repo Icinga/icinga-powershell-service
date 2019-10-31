@@ -8,7 +8,6 @@ namespace icinga_service.src.classes
     {
         private string ModulePath = "";
         private Process m_daemon  = null;
-        private Process m_checker = null;
         private Thread m_alive    = null;
    
         public Agent(string ModulePath)
@@ -20,7 +19,7 @@ namespace icinga_service.src.classes
         private void WriteEventLog(string message, EventLogEntryType severity, int eventId)
         {
             EventLog eventLog = new EventLog("Application");
-            eventLog.Source = "Icinga Windows Service";
+            eventLog.Source = "Icinga PowerShell Service";
             eventLog.WriteEntry(message, severity, eventId, 1);
         }
 
@@ -40,9 +39,7 @@ namespace icinga_service.src.classes
         private void IsRunning()
         {
             while (true) {
-
-                if ((this.m_daemon == null || this.m_daemon.HasExited == true) &&
-                    (this.m_checker == null || this.m_checker.HasExited == true)) {
+                if (this.m_daemon == null || this.m_daemon.HasExited == true) {
                     this.WriteEventLog(
                         "The PowerShell instances assigned to this service are no longer present. They either crashed or were terminated by the user. Stopping service.",
                         EventLogEntryType.Error,
@@ -61,17 +58,7 @@ namespace icinga_service.src.classes
             this.m_daemon = this.CreateProcess(
                 "powershell.exe",
                 string.Format(
-                    "-Command Invoke-Command {0} Import-Module '{1}'; Start-Icinga-Daemon -NoConsole | Out-Null; {2}",
-                    "{",
-                    this.ModulePath,
-                    "}"
-                )
-            );
-
-            this.m_checker = this.CreateProcess(
-                "powershell.exe",
-                string.Format(
-                    "-Command Invoke-Command {0} Import-Module '{1}'; Start-Icinga-Checker -NoConsole | Out-Null; {2}",
+                    "-Command Invoke-Command {0} Import-Module '{1}'; Use-Icinga; Start-IcingaPowerShellDaemon -RunAsService | Out-Null; {2}",
                     "{",
                     this.ModulePath,
                     "}"
@@ -79,18 +66,12 @@ namespace icinga_service.src.classes
             );
 
             this.WriteEventLog(
-                "Starting Icinga Windows Service Daemon.",
+                "Starting Icinga PowerShell Service Daemon.",
                 EventLogEntryType.Information,
                 101
             );
             this.m_daemon.Start();
 
-            this.WriteEventLog(
-                "Starting Icinga Windows Service Checker.",
-                EventLogEntryType.Information,
-                101
-            );
-            this.m_checker.Start();
             this.m_alive.Start();
         }
 
@@ -98,6 +79,7 @@ namespace icinga_service.src.classes
         public void StopAgent()
         {
             this.m_alive.Abort();
+
             try {
                 if (this.m_daemon != null && this.m_daemon.HasExited == false) {
                     this.m_daemon.Kill();
@@ -105,22 +87,7 @@ namespace icinga_service.src.classes
             } catch (Exception exception) {
                 this.WriteEventLog(
                     string.Format(
-                        "Failed to terminate Icinga Windows Service Daemon: {0}",
-                        exception.Message
-                    ),
-                    EventLogEntryType.Error,
-                    501
-                );
-            }
-
-            try {
-                if (this.m_checker != null && this.m_checker.HasExited == false) {
-                    this.m_checker.Kill();
-                }
-            } catch (Exception exception) {
-                this.WriteEventLog(
-                    string.Format(
-                        "Failed to terminate Icinga Windows Service Checker: {0}",
+                        "Failed to terminate Icinga PowerShell Service Daemon: {0}",
                         exception.Message
                     ),
                     EventLogEntryType.Error,

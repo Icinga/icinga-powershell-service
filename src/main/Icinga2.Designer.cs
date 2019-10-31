@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            this.ServiceName = "Icinga Windows Service";
+            this.ServiceName = "Icinga PowerShell Service";
         }
 
         #endregion
