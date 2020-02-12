@@ -2,7 +2,7 @@
 
 This repository provides a binary, required to run the [Icinga PowerShell Framework](https://github.com/Icinga/icinga-powershell-framework) as a native Windows Service.
 
-For details, please have a look on the [installation guide on the PowerShell Framework itself](https://github.com/Icinga/icinga-powershell-framework/blob/master/doc/10-Install-Service.md).
+For details, please have a look on the [installation guide on the PowerShell Framework itself](https://github.com/Icinga/icinga-powershell-framework/blob/master/doc/service/01-Install-Service.md).
 
 ## Contributing
 
