@@ -19,7 +19,7 @@ namespace icinga_service.src.classes
         private void WriteEventLog(string message, EventLogEntryType severity, int eventId)
         {
             EventLog eventLog = new EventLog("Application");
-            eventLog.Source = "Icinga PowerShell Service";
+            eventLog.Source = "Icinga for Windows";
             eventLog.WriteEntry(message, severity, eventId, 1);
         }
 
