@@ -6,12 +6,12 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{A92F1899-AAF2-4499-8275-9EDD79A0B515}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>Icinga_Service</RootNamespace>
+    <RootNamespace>IcingaForWindows</RootNamespace>
     <AssemblyName>icinga-service</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
     <IsWebBootstrapper>false</IsWebBootstrapper>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -22,8 +22,12 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
+    <SupportUrl>https://icinga.com/docs/icinga-for-windows/latest/</SupportUrl>
+    <ErrorReportUrl>https://icinga.com/docs/icinga-for-windows/latest/</ErrorReportUrl>
+    <ProductName>Icinga for Windows Service</ProductName>
+    <PublisherName>Icinga GmbH</PublisherName>
     <ApplicationRevision>0</ApplicationRevision>
-    <ApplicationVersion>1.1.0.%2a</ApplicationVersion>
+    <ApplicationVersion>1.2.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
@@ -60,11 +64,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="src\classes\agent.cs" />
-    <Compile Include="src\main\Icinga2.cs">
+    <Compile Include="src\main\icingaforwindows.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="src\main\Icinga2.Designer.cs">
-      <DependentUpon>Icinga2.cs</DependentUpon>
+    <Compile Include="src\main\icingaforwindows.Designer.cs">
+      <DependentUpon>icingaforwindows.cs</DependentUpon>
     </Compile>
     <Compile Include="src\main\Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
