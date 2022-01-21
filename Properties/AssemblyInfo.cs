@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // Allgemeine Informationen über eine Assembly werden über die folgenden
 // Attribute gesteuert. Ändern Sie diese Attributwerte, um die Informationen zu ändern,
 // die einer Assembly zugeordnet sind.
-[assembly: AssemblyTitle("Icinga PowerShell Service")]
-[assembly: AssemblyDescription("The Service binary for the Icinga PowerShell Framework.")]
+[assembly: AssemblyTitle("Icinga for Windows Service")]
+[assembly: AssemblyDescription("The service binary for Icinga for Windows.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Icinga GmbH")]
-[assembly: AssemblyProduct("Icinga PowerShell Service")]
-[assembly: AssemblyCopyright("Copyright © Icinga GmbH 2019")]
+[assembly: AssemblyProduct("Icinga for Windows Service")]
+[assembly: AssemblyCopyright("Copyright © Icinga GmbH 2022")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -32,5 +32,5 @@ using System.Runtime.InteropServices;
 // Sie können alle Werte angeben oder Standardwerte für die Build- und Revisionsnummern verwenden,
 // übernehmen, indem Sie "*" eingeben:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.1.0.0")]
-[assembly: AssemblyFileVersion("1.1.0.0")]
+[assembly: AssemblyVersion("1.2.0.0")]
+[assembly: AssemblyFileVersion("1.2.0.0")]

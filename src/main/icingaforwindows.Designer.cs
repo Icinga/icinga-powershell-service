@@ -1,6 +1,6 @@
-﻿namespace icinga_service
+﻿namespace IcingaForWindows
 {
-    partial class Icinga2
+    partial class IcingaForWindows
     {
         /// <summary> 
         /// Erforderliche Designervariable.
@@ -28,8 +28,12 @@
         /// </summary>
         private void InitializeComponent()
         {
-            components = new System.ComponentModel.Container();
-            this.ServiceName = "Icinga PowerShell Service";
+            // 
+            // IcingaForWindows
+            // 
+            this.CanPauseAndContinue = true;
+            this.ServiceName = "Icinga for Windows Service";
+
         }
 
         #endregion

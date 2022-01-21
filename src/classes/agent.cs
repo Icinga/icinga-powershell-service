@@ -2,24 +2,53 @@
 using System.Diagnostics;
 using System.Threading;
 
-namespace icinga_service.src.classes
+namespace IcingaForWindows.src.classes
 {
     class Agent
     {
-        private string ModulePath = "";
-        private Process m_daemon  = null;
-        private Thread m_alive    = null;
+        private string m_modulePath = "";
+        private string m_JEAProfile = "";
+        private Process m_daemon    = null;
+        private Thread m_alive      = null;
    
-        public Agent(string ModulePath)
+        public Agent(string ModulePath, string JEAProfile)
         {
-            this.ModulePath = ModulePath;
+            this.m_modulePath = ModulePath;
+            this.m_JEAProfile = JEAProfile;
             this.m_alive = new Thread(new ThreadStart(this.IsRunning));
         }
 
         private void WriteEventLog(string message, EventLogEntryType severity, int eventId)
         {
-            EventLog eventLog = new EventLog("Application");
-            eventLog.Source = "Icinga for Windows";
+            // Icinga for Windows >= v1.8.0
+            string EventLogSource = "IfW::Service";
+
+            try {
+                if (EventLog.SourceExists(EventLogSource) == false) {
+                    // Icinga for Windows < v1.8.0
+                    EventLogSource = "Icinga for Windows";
+
+                    if (EventLog.SourceExists(EventLogSource) == false) {
+                        // There is no place to write EventLog information to
+                        return;
+                    }
+                }
+            } catch {
+                try  {
+                    // Icinga for Windows < v1.8.0
+                    EventLogSource = "Icinga for Windows";
+
+                    if (EventLog.SourceExists(EventLogSource) == false) {
+                        // There is no place to write EventLog information to
+                        return;
+                    }
+                } catch {
+                    return;
+                }
+            }
+
+            EventLog eventLog = new EventLog();
+            eventLog.Source   = EventLogSource;
             eventLog.WriteEntry(message, severity, eventId, 1);
         }
 
@@ -30,8 +59,8 @@ namespace icinga_service.src.classes
             process.StartInfo.Arguments              = arguments;
             process.StartInfo.WindowStyle            = ProcessWindowStyle.Hidden;
             process.StartInfo.UseShellExecute        = false;
-            process.StartInfo.RedirectStandardOutput = true;
-            process.StartInfo.RedirectStandardError  = true;
+            process.StartInfo.RedirectStandardOutput = false;
+            process.StartInfo.RedirectStandardError  = false;
 
             return process;
         }
@@ -41,7 +70,7 @@ namespace icinga_service.src.classes
             while (true) {
                 if (this.m_daemon == null || this.m_daemon.HasExited == true) {
                     this.WriteEventLog(
-                        "The PowerShell instances assigned to this service are no longer present. They either crashed or were terminated by the user. Stopping service.",
+                        "The Icinga for Windows PowerShell instance assigned to this service is no longer present. It either crashed or was terminated by the user. Stopping service.",
                         EventLogEntryType.Error,
                         515
                     );
@@ -55,21 +84,30 @@ namespace icinga_service.src.classes
         // Start the Agent on the listen socket
         public void StartAgent()
         {
+            string PowerShellArgs = "";
+
+            if (string.IsNullOrEmpty(this.m_JEAProfile) == false) {
+                PowerShellArgs = string.Format(
+                    "-ConfigurationName '{0}' -NoProfile -NoLogo -Command {{ Use-Icinga -Daemon; if (Test-IcingaFunction -Name 'Start-IcingaForWindowsDaemon') {{ Start-IcingaForWindowsDaemon -RunAsService -JEAContext | Out-Null; }} else {{ Start-IcingaPowerShellDaemon -RunAsService -JEAContext | Out-Null; }} }}",
+                    this.m_JEAProfile
+                );
+            } else {
+                PowerShellArgs = string.Format(
+                    "-NoProfile -NoLogo -Command Invoke-Command {{ Import-Module '{0}'; Use-Icinga -Daemon; if (Test-IcingaFunction -Name 'Start-IcingaForWindowsDaemon') {{ Start-IcingaForWindowsDaemon -RunAsService | Out-Null; }} else {{ Start-IcingaPowerShellDaemon -RunAsService | Out-Null; }} }}",
+                    this.m_modulePath
+                );
+            }
+
             this.m_daemon = this.CreateProcess(
-                "powershell.exe",
-                string.Format(
-                    "-Command Invoke-Command {0} Import-Module '{1}'; Use-Icinga; Start-IcingaPowerShellDaemon -RunAsService | Out-Null; {2}",
-                    "{",
-                    this.ModulePath,
-                    "}"
-                )
+                "powershell.exe", PowerShellArgs
             );
 
             this.WriteEventLog(
-                "Starting Icinga PowerShell Service Daemon.",
+                string.Format("Starting Icinga for Windows service with arguments '{0}'", PowerShellArgs),
                 EventLogEntryType.Information,
                 101
             );
+
             this.m_daemon.Start();
 
             this.m_alive.Start();
@@ -87,7 +125,7 @@ namespace icinga_service.src.classes
             } catch (Exception exception) {
                 this.WriteEventLog(
                     string.Format(
-                        "Failed to terminate Icinga PowerShell Service Daemon: {0}",
+                        "Failed to terminate Icinga for Windows Service: {0}",
                         exception.Message
                     ),
                     EventLogEntryType.Error,
