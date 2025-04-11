@@ -4,7 +4,7 @@ The service itself does not ship with any installation tools or commands and ent
 
 ## Using the Wizard
 
-The most straight-forward way to install the service is by using the [Kickstart Script](https://icinga.com/docs/windows/latest/doc/installation/01-Kickstart-Script/) or the installation wizard of the Framework. In case you already run the wizard during installation, you most likely have chosen to install the service already. If not you can of course install the service manually.
+The most straight-forward way to install the service is by using the [Icinga for Windows Installer Script](https://icinga.com/docs/icinga-for-windows/latest/doc/110-Installation/01-Getting-Started/). In case you already run the wizard during installation, you most likely have chosen to install the service already. If not you can of course install the service manually.
 
 ## Manual installation
 
@@ -83,4 +83,4 @@ Running  icingapowershell   Icinga PowerShell Service
 
 ### Installing background daemons
 
-As we are now finished with the service installation we can make use of it by [registering background daemons](https://icinga.com/docs/windows/latest/doc/service/02-Register-Daemons/).
+As we are now finished with the service installation we can make use of it by [registering background daemons](https://icinga.com/docs/icinga-for-windows/latest/doc/110-Installation/05-Background-Daemons/).
