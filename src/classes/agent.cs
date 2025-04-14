@@ -7,14 +7,12 @@ namespace IcingaForWindows.src.classes
     class Agent
     {
         private string m_modulePath = "";
-        private string m_JEAProfile = "";
         private Process m_daemon    = null;
         private Thread m_alive      = null;
    
-        public Agent(string ModulePath, string JEAProfile)
+        public Agent(string ModulePath)
         {
             this.m_modulePath = ModulePath;
-            this.m_JEAProfile = JEAProfile;
             this.m_alive = new Thread(new ThreadStart(this.IsRunning));
         }
 
@@ -69,7 +67,7 @@ namespace IcingaForWindows.src.classes
         {
             while (true) {
                 if (this.m_daemon == null || this.m_daemon.HasExited == true) {
-                    this.WriteEventLog(
+                    this.WriteEventLog( 
                         "The Icinga for Windows PowerShell instance assigned to this service is no longer present. It either crashed or was terminated by the user. Stopping service.",
                         EventLogEntryType.Error,
                         515
@@ -86,17 +84,10 @@ namespace IcingaForWindows.src.classes
         {
             string PowerShellArgs = "";
 
-            if (string.IsNullOrEmpty(this.m_JEAProfile) == false) {
-                PowerShellArgs = string.Format(
-                    "-ConfigurationName '{0}' -NoProfile -NoLogo -Command {{ Use-Icinga -Daemon; if (Test-IcingaFunction -Name 'Start-IcingaForWindowsDaemon') {{ Start-IcingaForWindowsDaemon -RunAsService -JEAContext | Out-Null; }} else {{ Start-IcingaPowerShellDaemon -RunAsService -JEAContext | Out-Null; }} }}",
-                    this.m_JEAProfile
-                );
-            } else {
-                PowerShellArgs = string.Format(
-                    "-NoProfile -NoLogo -Command Invoke-Command {{ Import-Module '{0}'; Use-Icinga -Daemon; if (Test-IcingaFunction -Name 'Start-IcingaForWindowsDaemon') {{ Start-IcingaForWindowsDaemon -RunAsService | Out-Null; }} else {{ Start-IcingaPowerShellDaemon -RunAsService | Out-Null; }} }}",
-                    this.m_modulePath
-                );
-            }
+            PowerShellArgs = string.Format(
+                "-NoProfile -NoLogo -Command Invoke-Command {{ Import-Module '{0}'; Use-Icinga -Daemon; if (Test-IcingaFunction -Name 'Start-IcingaForWindowsDaemon') {{ Start-IcingaForWindowsDaemon -RunAsService | Out-Null; }} else {{ Start-IcingaPowerShellDaemon -RunAsService | Out-Null; }} }}",
+                this.m_modulePath
+            );
 
             this.m_daemon = this.CreateProcess(
                 "powershell.exe", PowerShellArgs
