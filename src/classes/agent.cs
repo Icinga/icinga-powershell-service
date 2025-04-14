@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Diagnostics;
 using System.Threading;
 
@@ -14,6 +15,21 @@ namespace IcingaForWindows.src.classes
         {
             this.m_modulePath = ModulePath;
             this.m_alive = new Thread(new ThreadStart(this.IsRunning));
+        }
+
+        public bool DoesFrameworkExist()
+        {
+            // Validate if the provided module path is valid
+            if (string.IsNullOrWhiteSpace(this.m_modulePath) || File.Exists(this.m_modulePath) == false || Path.GetExtension(this.m_modulePath).ToLower() != ".psd1") {
+                this.WriteEventLog(
+                        (string.Format("The Icinga for Windows service could not find the required files for the Icinga PowerShell Framework on the given path. Please ensure it directly points to the icinga-powershell-framework.psd1. Given path: '{0}'", this.m_modulePath)),
+                        EventLogEntryType.Error,
+                        550
+                    );
+                return false;
+            }
+
+            return true;
         }
 
         private void WriteEventLog(string message, EventLogEntryType severity, int eventId)
@@ -52,13 +68,15 @@ namespace IcingaForWindows.src.classes
 
         private Process CreateProcess(string executable, string arguments)
         {
-            Process process                          = new Process();
-            process.StartInfo.FileName               = executable;
-            process.StartInfo.Arguments              = arguments;
-            process.StartInfo.WindowStyle            = ProcessWindowStyle.Hidden;
-            process.StartInfo.UseShellExecute        = false;
-            process.StartInfo.RedirectStandardOutput = false;
-            process.StartInfo.RedirectStandardError  = false;
+            Process process                                    = new Process();
+            process.StartInfo.FileName                         = executable;
+            process.StartInfo.Arguments                        = arguments;
+            process.StartInfo.WindowStyle                      = ProcessWindowStyle.Hidden;
+            process.StartInfo.UseShellExecute                  = false;
+            process.StartInfo.RedirectStandardOutput           = false;
+            process.StartInfo.RedirectStandardError            = false;
+            // Add an environment variable with the path given by modulePath
+            process.StartInfo.EnvironmentVariables["IFW_PATH"] = this.m_modulePath;
 
             return process;
         }
@@ -82,12 +100,7 @@ namespace IcingaForWindows.src.classes
         // Start the Agent on the listen socket
         public void StartAgent()
         {
-            string PowerShellArgs = "";
-
-            PowerShellArgs = string.Format(
-                "-NoProfile -NoLogo -Command Invoke-Command {{ Import-Module '{0}'; Use-Icinga -Daemon; if (Test-IcingaFunction -Name 'Start-IcingaForWindowsDaemon') {{ Start-IcingaForWindowsDaemon -RunAsService | Out-Null; }} else {{ Start-IcingaPowerShellDaemon -RunAsService | Out-Null; }} }}",
-                this.m_modulePath
-            );
+            string PowerShellArgs = "-NoProfile -NoLogo -Command Invoke-Command { Import-Module \"$Env:IFW_PATH\"; Use-Icinga -Daemon; if (Test-IcingaFunction -Name 'Start-IcingaForWindowsDaemon') { Start-IcingaForWindowsDaemon -RunAsService | Out-Null; } else { Start-IcingaPowerShellDaemon -RunAsService | Out-Null; } }";
 
             this.m_daemon = this.CreateProcess(
                 "powershell.exe", PowerShellArgs
