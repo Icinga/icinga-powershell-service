@@ -11,19 +11,14 @@ namespace IcingaForWindows
         {
             // We should only accept one argument: The PowerShell Module path for imports
             string module = "";
-            string JEA    = "";
 
             if (args.Length > 0) {
                 module = args[0];
             }
-
-            if (args.Length > 1) {
-                JEA = args[1];
-            }
             
             ServiceBase[] ServicesToRun;
             ServicesToRun = new ServiceBase[] {
-                new IcingaForWindows(module, JEA)
+                new IcingaForWindows(module)
             };
             ServiceBase.Run(ServicesToRun);
         }

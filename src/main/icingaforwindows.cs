@@ -12,15 +12,13 @@ namespace IcingaForWindows
     public partial class IcingaForWindows : ServiceBase
     {
         private string m_modulePath = "";
-        private string m_JEAProfile = "";
         private Agent m_agent       = null;
    
-        public IcingaForWindows(string ModulePath, string JEAProfile)
+        public IcingaForWindows(string ModulePath)
         {
             InitializeComponent();
             this.m_modulePath = ModulePath;
-            this.m_JEAProfile = JEAProfile;
-            this.m_agent      = new Agent(this.m_modulePath, this.m_JEAProfile);
+            this.m_agent      = new Agent(this.m_modulePath);
         }
 
         protected override void OnStart(string[] args)
