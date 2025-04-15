@@ -21,6 +21,15 @@ namespace IcingaForWindows
             this.m_agent      = new Agent(this.m_modulePath);
         }
 
+        public bool DoesFrameworkExist()
+        {
+            if (this.m_agent == null) {
+                return false;
+            }
+
+            return this.m_agent.DoesFrameworkExist();
+        }
+
         protected override void OnStart(string[] args)
         {
             this.m_agent.StartAgent();
